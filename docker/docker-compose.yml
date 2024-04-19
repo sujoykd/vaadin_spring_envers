@@ -1,0 +1,25 @@
+name: dummy_v24
+
+networks:
+  local:
+    driver: bridge
+
+volumes:
+  dbdata:
+
+services:
+  mariadb:
+    image: mariadb:11.2.3
+    ports:
+      - 55533:3306
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - MYSQL_ROOT_PASSWORD=dummy
+    command: --innodb-flush-method=fsync --innodb-use-native-aio=0
+    healthcheck:
+      test: [ "CMD", "/usr/local/bin/healthcheck.sh", "--connect" ]
+    container_name: dummy_db
+    networks:
+      - local
