@@ -1,8 +1,7 @@
-package org.vaadin.example.data.entity;
+package org.vaadin.example.data.book.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +9,9 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,29 +26,20 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = false)
-@ToString(onlyExplicitlyIncluded = true, callSuper = false)
-@Entity(name = "Tag")
-@Table(name = "tag")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+@Entity(name = "Author")
+@Table(name = "author")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Tag {
-
+@ToString(onlyExplicitlyIncluded = true, callSuper = false)
+public class Author {
     @Id
     @GeneratedValue
+    @EqualsAndHashCode.Include
     private Long id;
 
-    @EqualsAndHashCode.Include
-    @ToString.Include
     @Column(unique = true)
     private String name;
-
-    @OneToMany(
-            mappedBy = "tag",
-            orphanRemoval = true,
-            fetch = FetchType.EAGER
-    )
-    private List<PostTag> posts = new ArrayList<>();
 
     @CreatedBy
     private String createdBy;
@@ -63,7 +55,13 @@ public class Tag {
     @Column(name = "updated_datetime")
     private LocalDateTime updatedDateTime;
 
-    public Tag(String name) {
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "book_author_assoc",
+            joinColumns = @JoinColumn(name = "author_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_id"))
+    private Set<Book> books;
+
+    public Author(String name) {
         this.name = name;
     }
 }

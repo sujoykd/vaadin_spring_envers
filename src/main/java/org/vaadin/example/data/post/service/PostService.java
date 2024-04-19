@@ -1,4 +1,4 @@
-package org.vaadin.example;
+package org.vaadin.example.data.post.service;
 
 import java.util.List;
 
@@ -12,14 +12,14 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.vaadin.example.data.entity.Post;
-import org.vaadin.example.data.entity.Tag;
-import org.vaadin.example.data.repository.PostRepository;
-import org.vaadin.example.data.repository.TagRepository;
+import org.vaadin.example.data.post.entity.Post;
+import org.vaadin.example.data.post.entity.Tag;
+import org.vaadin.example.data.post.repository.PostRepository;
+import org.vaadin.example.data.post.repository.TagRepository;
 
 @Service
 @Slf4j
-public class DataService {
+public class PostService {
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -31,7 +31,7 @@ public class DataService {
         return AuditReaderFactory.get(entityManager);
     }
 
-    public void test() {
+    public void initialSetup() {
         var tagCount = tagRepository.count();
         if (tagCount == 0) {
             createTags();
@@ -92,11 +92,11 @@ public class DataService {
     }
 
     @Transactional
-    public Post fetchPostHistory(Post p, Number rev) {
-        var post = getAuditReader().find(Post.class, Post.class.getName(), p.getId(), rev, true);
-        Hibernate.initialize(post.getTags());
-        post.getTags().forEach(pt -> Hibernate.initialize(pt.getTag()));
-        return post;
+    public Post fetchPostHistory(Post post, Number rev) {
+        var postHistory = getAuditReader().find(Post.class, Post.class.getName(), post.getId(), rev, true);
+        Hibernate.initialize(postHistory.getTags());
+        postHistory.getTags().forEach(pt -> Hibernate.initialize(pt.getTag()));
+        return postHistory;
     }
 
     public List<Post> fetchPosts() {

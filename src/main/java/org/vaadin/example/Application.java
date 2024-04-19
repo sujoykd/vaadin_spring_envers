@@ -13,6 +13,8 @@ import org.springframework.data.envers.repository.support.EnversRevisionReposito
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.vaadin.example.data.book.service.BookService;
+import org.vaadin.example.data.post.service.PostService;
 
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.theme.Theme;
@@ -27,7 +29,9 @@ import com.vaadin.flow.theme.Theme;
 public class Application implements AppShellConfigurator, CommandLineRunner {
 
     @Autowired
-    DataService dataService;
+    private PostService postService;
+    @Autowired
+    private BookService bookService;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -45,6 +49,7 @@ public class Application implements AppShellConfigurator, CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        dataService.test();
+        postService.initialSetup();
+        bookService.initialSetup();
     }
 }

@@ -1,4 +1,4 @@
-package org.vaadin.example.data.entity;
+package org.vaadin.example.data.post.entity;
 
 import java.io.Serializable;
 

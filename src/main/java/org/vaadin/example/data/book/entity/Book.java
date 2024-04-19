@@ -1,14 +1,17 @@
-package org.vaadin.example.data.entity;
+package org.vaadin.example.data.book.entity;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,25 +27,19 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
-@ToString(onlyExplicitlyIncluded = true, callSuper = true)
-@Entity(name = "PostTag")
-@Table(name = "post_tag")
+@Entity(name = "Book")
+@Table(name = "book")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class PostTag {
-
-    @EmbeddedId
-    @ToString.Include
+@ToString(onlyExplicitlyIncluded = true, callSuper = false)
+public class Book {
+    @Id
+    @GeneratedValue
     @EqualsAndHashCode.Include
-    private PostTagId id;
+    private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("postId")
-    private Post post;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("tagId")
-    private Tag tag;
+    @Column(unique = true)
+    private String name;
 
     @CreatedBy
     private String createdBy;
@@ -58,10 +55,13 @@ public class PostTag {
     @Column(name = "updated_datetime")
     private LocalDateTime updatedDateTime;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "book_author_assoc",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id"))
+    private Set<Author> authors;
 
-    public PostTag(Post post, Tag tag) {
-        this.post = post;
-        this.tag = tag;
-        this.id = new PostTagId(post.getId(), tag.getId());
+    public Book(String name) {
+        this.name = name;
     }
 }

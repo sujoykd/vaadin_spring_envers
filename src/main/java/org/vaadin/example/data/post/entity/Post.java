@@ -1,4 +1,4 @@
-package org.vaadin.example.data.entity;
+package org.vaadin.example.data.post.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,8 +16,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.Fetch;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,6 +26,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity(name = "Post")
 @Table(name = "post")
@@ -64,9 +65,6 @@ public class Post {
     @LastModifiedDate
     @Column(name = "updated_datetime")
     private LocalDateTime updatedDateTime;
-
-    public Post() {
-    }
 
     public Post(String title) {
         this.title = title;
